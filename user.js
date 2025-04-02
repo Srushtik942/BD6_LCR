@@ -1,6 +1,6 @@
 const user = {
-    "email": "user@example.com",
-    "password": "securePassword123"
+    "email": "test@example.com",
+    "password": "password123"
   }
 
   async function checkDefaultBody(newBody) {
