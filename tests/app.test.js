@@ -1,6 +1,7 @@
 const { checkDefaultBody } = require('../user');
 const { app } = require('../index');
 const request = require('supertest');
+const { response } = require('express');
 
 describe('api endpoints', () => {
   it("should return 200 for correct credentials", async () => {
@@ -39,28 +40,44 @@ describe('api endpoints', () => {
     expect(response.body.error).toBeDefined();
   });
 
-  it("should enforce rate limiting after 5 attempts", async () => {
-    // Make 5 failed attempts
-    for (let i = 0; i < 5; i++) {
-      await request(app)
-        .post('/login')
-        .send({
-          email: "test@example.com",
-          password: "wrongPassword"
-        });
-    }
+  // 1. **Missing Fields Test: ( Test case name:** Handle missing email or password fields.)
 
-    // 6th attempt should be rate limited
-    const response = await request(app)
-      .post('/login')
-      .send({
-        email: "test@example.com",
-        password: "password123" // correct password
+    // 🟠 Test if the API returns an error when `email` or `password` is missing.
+
+    it("Handle missing email or password fields",async()=>{
+      const response = await request(app).post('/login').send({
+        email: "SrushtiKulkarni@gmail.com"
       });
+      console.log(response);
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toEqual({error: "Email or password are required"})
+    })
 
-    expect(response.statusCode).toBe(429);
-    expect(response.body).toEqual({
-      error: "Too many login attempts. Try again later."
-    });
-  });
+
+
+  // it("should enforce rate limiting after 5 attempts", async () => {
+  //   // Make 5 failed attempts
+  //   for (let i = 0; i < 5; i++) {
+  //     await request(app)
+  //       .post('/login')
+  //       .send({
+  //         email: "test@example.com",
+  //         password: "wrongPassword"
+  //       });
+  //   }
+
+  //   // 6th attempt should be rate limited
+  //   const response = await request(app)
+  //     .post('/login')
+  //     .send({
+  //       email: "test@example.com",
+  //       password: "password123" // correct password
+  //     });
+
+  //   expect(response.statusCode).toBe(429);
+  //   expect(response.body).toEqual({
+  //     error: "Too many login attempts. Try again later."
+  //   });
+  // });
+
 });

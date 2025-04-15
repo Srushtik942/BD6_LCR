@@ -35,7 +35,7 @@ app.post('/login', rateLimitLogin, (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
+    return res.status(400).json({ error: "Email or password are required" });
   }
 
   const user = users.find(u => u.email === email && u.password === password);
@@ -44,7 +44,11 @@ app.post('/login', rateLimitLogin, (req, res) => {
     return res.json({ success: true, token: "JWT_TOKEN" });
   }
 
+  return res.status(200).json({message:"Successfull login attempts"})
+
   res.status(400).json({ error: "Invalid credentials" });
 });
+
+
 
 module.exports = { app };
